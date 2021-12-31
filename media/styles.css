@@ -1,0 +1,18 @@
+.container{
+
+    margin-top: 100px;
+}
+
+.green-text {
+    color: darkgreen;
+}
+
+.back {
+    background-repeat: no-repeat;
+    background-size: auto;
+    object-fit: cover;
+}
+
+body, html {
+  height: 100%;
+}

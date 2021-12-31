@@ -1,10 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Registration</title>
-</head>
-<body>
+<html lang="en" background-img>
 
-</body>
+    <head>
+        <title>Register</title>
+        {% include "header.html" %}
+    </head>
+    <body class="back">
+        {% include "base_generic.html" %}
+
+        {% block content %}
+
+        <div class="container">
+
+            <h3 class="d-flex justify-content-center">Register</h3>
+            <div class="jumbotron m-5">
+                {% if form.errors %}
+                    <h6 class="alert-danger col-4 p-2 offset-4">Your username and password didn't match. Please try again.</h6>
+                {% endif %}
+                {% if errors %}
+                    <h6 class="alert-danger col-4 p-2 offset-4">{{ errors }}</h6>
+                {% endif %}
+                {% if success %}
+                    <h6 class="alert-success col-4 p-2 offset-4">{{ success }}</h6>
+                {% endif %}
+                <form class="" method="post" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-4 offset-4">
+
+                              <div class="form-group">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                              </div>
+                              <div class="form-group">
+                                <label for="exampleInputUsername">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+                              </div>
+                              <div class="form-group">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                              </div>
+                              <div class="form-group">
+                                <label for="exampleInputPassword1">Retype - Password</label>
+                                <input type="password" class="form-control" id="password2" name="password2" placeholder="Password">
+                              </div>
+                              <a href="{% url 'custom_login' %}" class="mr-4">Already have an account?</a>
+                              <button type="submit" class="btn btn-danger">Create</button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {# Assumes you setup the password_reset view in your URLconf #}
+{#        <p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}
+
+    {% endblock %}
+    </body>
+
 </html>
