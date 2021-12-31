@@ -22,5 +22,5 @@ class APIProduct(models.Model):
     subscribers = models.ManyToManyField('User', blank=True, verbose_name='subscribers')
 
     def __str__(self):
-        active = 'Active' if self.approve else 'Non-Active'
+        active = 'Active' if self.active else 'Non-Active'
         return f'{active} - {self.name}'

@@ -7,11 +7,24 @@ admin.site.register(User)
 
 
 class APIProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'about', 'logo', 'active', #'subscribers',
+                    'total_subscribers', 'total_subscribers_by_country',
+                    'total_subscribers_by_usage', )
+    readonly_fields = ('total_subscribers', 'total_subscribers_by_country',
+                       'total_subscribers_by_usage', )
 
-    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
-        extra_context = extra_context or {}
-        extra_context['habibi'] = 'aanish'
-        return super(APIProductAdmin, self).changeform_view(request, extra_context=extra_context)
+    def total_subscribers(self, obj):
+
+        return obj.subscribers.count()
+
+    def total_subscribers_by_country(self, obj):
+        total = 0
+        for itm in obj.subscribers.all():
+            itm
+        return obj.total_subscribers_by_country()
+
+    def total_subscribers_by_usage(self, obj):
+        return obj.total_subscribers_by_usage()
 
 
 admin.site.register(APIProduct, APIProductAdmin)
