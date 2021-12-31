@@ -27,20 +27,28 @@ class Register(TemplateView):
 
         username = request.POST['username']
         email = request.POST['email']
+        phone = request.POST['phone']
+        usage = request.POST['usage']
+        address = request.POST['address']
+        city = request.POST['city']
+        state = request.POST['state']
+        country = request.POST['country']
         password = request.POST['password']
-        password2 = request.POST['password2']
 
-        if password == password2:
+        # send confirmation email
+        # twilio integration
+
+
+        try:
             try:
-                try:
-                    User.objects.get(email=email)
-                    return render(request, self.template_name, {'errors': 'Email already exists.'})
-                except User.DoesNotExist:
-                    User.objects.create_user(username=username, password=password, email=email)
-            except Exception as e:
-                if str(e) == 'UNIQUE constraint failed: users_user.username':
-                    return render(request, self.template_name, {'errors': 'Username already taken.'})
-                return render(request, self.template_name, {'errors': e})
+                User.objects.get(email=email)
+                return render(request, self.template_name, {'errors': 'Email already exists.'})
+            except User.DoesNotExist:
+                User.objects.create_user(username=username, password=password, email=email)
+        except Exception as e:
+            if str(e) == 'UNIQUE constraint failed: users_user.username':
+                return render(request, self.template_name, {'errors': 'Username already taken.'})
+            return render(request, self.template_name, {'errors': e})
         else:
             return render(request, self.template_name, {'errors': 'Passwords do not match.'})
 

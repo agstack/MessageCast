@@ -26,28 +26,57 @@
                 <form class="" method="post" action="{% url 'register' %}">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-4 offset-4">
+                        <div class="col-4 offset-2">
 
-                              <div class="form-group">
-                                <label for="exampleInputEmail1">Email address</label>
-                                <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                              </div>
                               <div class="form-group">
                                 <label for="exampleInputUsername">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
                               </div>
                               <div class="form-group">
-                                <label for="exampleInputPassword1">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
                               </div>
                               <div class="form-group">
-                                <label for="exampleInputPassword1">Retype - Password</label>
-                                <input type="password" class="form-control" id="password2" name="password2" placeholder="Password">
+                                <label for="exampleInputPhonenumber">Phone number</label>
+                                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone">
                               </div>
+                              <div class="form-group">
+                                   <label>Usage</label>
+                                   <select class="form-control" id="usage" name="usage" required>
+                                      <option value="commercial">commercial</option>
+                                         <option value="research" data-value='research'>research</option>
+                                         <option value="educational" data-value='educational'>educational</option>
+                                         <option value="government" data-value='government'>government</option>
+                                   </select>
+                              </div>
+
+                             <div class="form-group">
+                                <label for="exampleInputAddress">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" placeholder="Enter address">
+                             </div>
+
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            </div>
+                             <div class="form-group">
+                                <label for="exampleInputCity">City</label>
+                                <input type="text" class="form-control" id="city" name="city" placeholder="Enter city">
+                             </div>
+                             <div class="form-group">
+                                <label for="exampleInputState">State</label>
+                                <input type="text" class="form-control" id="state" name="state" placeholder="Enter state">
+                             </div>
+                             <div class="form-group">
+                                <label for="exampleInputCountry">Country</label>
+                                <input type="text" class="form-control" id="country" name="country" value="USA" placeholder="Enter country">
+                             </div>
+                            <div class="mt-5">
                               <a href="{% url 'custom_login' %}" class="mr-4">Already have an account?</a>
                               <button type="submit" class="btn btn-danger">Create</button>
-
+                            </div>
                         </div>
                     </div>
                 </form>
