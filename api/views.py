@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
-from api.models import User
+from api.models import User, APIProduct
+from api.serializers import APIProductSerializer
 
 
 class Login(LoginView):
@@ -38,7 +39,6 @@ class Register(TemplateView):
         # send confirmation email
         # twilio integration
 
-
         try:
             try:
                 User.objects.get(email=email)
@@ -59,8 +59,11 @@ class HomeView(TemplateView, LoginRequiredMixin, View):
     template_name = "home.html"
     login_url = '/login/'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        # context['plants'] = PlantsSerializer(Plant.objects.all().order_by('-created_at'), many=True).data
-        # return context
+        objs = APIProduct.objects.all()
+        context['api_products'] = APIProductSerializer(objs, many=True).data
+
+        context['title'] = 'Home'
+        return context

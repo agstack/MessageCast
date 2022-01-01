@@ -1,0 +1,26 @@
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3"
+         style="background-color:#34495e; color:antiquewhite;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
+{#            <a href="{% url 'create-post' %}" class="btn btn-info btn-sm">#}
+{#                Create a Post#}
+{#            </a>#}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav nav nav-pills" style="margin-left:auto;">
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="{% url 'custom_logout' %}?next={{ request.path }}">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i> &nbsp
+                            Log Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

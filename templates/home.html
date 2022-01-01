@@ -1,12 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Home</title>
+    {% load static %}
+    {% include "header.html" %}
 </head>
 <body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Logo</th>
+              <th scope="col">Name</th>
+              <th scope="col">About</th>
+              <th scope="col">Subscription</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for obj in api_products %}
+                <tr>
+                  <td>
+                    {% if obj.logo %}
+                        <img class="row-img" src="{{ obj.logo }}">
+                    {% else %}
+                        <img class="card-img-top" alt="sample">
+                    {% endif %}
+                  </td>
+                  <td>{{ obj.name }}</td>
+                  <td>{{ obj.about }}</td>
+                  <td>
+                      <div class="btn btn-sm btn-success">
+                          subscribe
+                      </div>
+                      <div class="btn btn-sm btn-danger">
+                          unsubscribe
+                      </div>
+                  </td>
+                </tr>
+            {% endfor %}
 
-<h2>This is the Home page</h2>
+          </tbody>
+        </table>
+    </div>
 
 </body>
 </html>

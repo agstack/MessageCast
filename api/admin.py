@@ -7,9 +7,7 @@ admin.site.register(User)
 
 
 class APIProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'about', 'logo', 'active', #'subscribers',
-                    'total_subscribers', 'total_subscribers_by_country',
-                    'total_subscribers_by_usage', )
+    list_display = ('name', 'active', )
     readonly_fields = ('total_subscribers', 'total_subscribers_by_country',
                        'total_subscribers_by_usage', )
 
@@ -19,12 +17,13 @@ class APIProductAdmin(admin.ModelAdmin):
 
     def total_subscribers_by_country(self, obj):
         total = 0
-        for itm in obj.subscribers.all():
-            itm
-        return obj.total_subscribers_by_country()
+        # for itm in obj.subscribers.all():
+        #     itm
+        return total
 
     def total_subscribers_by_usage(self, obj):
-        return obj.total_subscribers_by_usage()
+        total = 0
+        return total
 
 
 admin.site.register(APIProduct, APIProductAdmin)

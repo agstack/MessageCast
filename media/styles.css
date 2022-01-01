@@ -13,6 +13,9 @@
     object-fit: cover;
 }
 
-body, html {
-  height: 100%;
+
+
+.row-img {
+    height: 75px;
+    width: auto;
 }
