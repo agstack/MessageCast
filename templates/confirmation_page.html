@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    {% include "header.html" %}
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <div class="row">
+            {% if status %}
+                <h6 class="alert-success mx-auto d-flex justify-content-center p-3">{{ status }}</h6>
+            {% endif %}
+        </div>
+
+        <div class="row">
+
+            <div class="col mx-auto">
+                {% if product.logo %}
+                    <img class="w-100" src="{{ product.logo }}">
+                {% else %}
+                    <img class="" alt="sample">
+                {% endif %}
+            </div>
+            <div class="col offset-1">
+                <form action="{% url 'confirmation_page' %}" method="post">
+                    {% csrf_token %}
+                    <input class="d-none" type="text" name="product_id" value="{{ product.id }}"/>
+
+                    <p>
+                        <h3>{{ product.name }}</h3>
+                    </p><br/>
+
+                    <p>{{ product.about }}</p>
+
+                    <p>
+                        {% if subscription.status %}
+                            <div>
+                                <strong>subscription: </strong>
+                                <div class="badge badge-success">active </div>
+                            </div>
+                        {% else %}
+                            <div>
+                                <strong>subscription: </strong>
+                                <div class="badge badge-danger">inactive </div>
+                            </div>
+                        {% endif %}
+                    </p>
+
+                    <p><strong>token: </strong>{{ subscription.token }}</p><br/>
+
+                    <p>
+                        {% if subscription.status %}
+                            <input class="btn btn-lg btn-danger" type="submit" name="unsubscribe" value="Confirm unsubscription"/>
+                        {% else %}
+                            <input class="btn btn-lg btn-success" type="submit" name="subscribe" value="Confirm subscription"/>
+                        {% endif %}
+
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

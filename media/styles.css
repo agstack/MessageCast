@@ -19,3 +19,5 @@
     height: 75px;
     width: auto;
 }
+
+p + p { margin-top: 10px; }

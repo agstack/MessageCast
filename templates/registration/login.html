@@ -34,12 +34,13 @@
                         <input type="hidden" name="/home/" value="/home/"/>
                         <a class="btn btn-danger" href="{% url 'register' %}">Create Account</a>
                     </div>
+                    <div class="col offset-8 mt-3">
+                        <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                    </div>
                 </form>
             </div>
         </div>
 
-        {# Assumes you setup the password_reset view in your URLconf #}
-{#        <p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}
 
     {% endblock %}
     </body>

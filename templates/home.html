@@ -7,35 +7,37 @@
 <body>
     {% include 'navbar.html' %}
     <div class="container">
-        <table class="table table-striped">
+        <table class="table table-striped w-75 mx-auto">
           <thead>
             <tr>
-              <th scope="col">Logo</th>
+              <th scope="col">ID</th>
               <th scope="col">Name</th>
-              <th scope="col">About</th>
+              <th scope="col">Logo</th>
               <th scope="col">Subscription</th>
             </tr>
           </thead>
           <tbody>
             {% for obj in api_products %}
                 <tr>
-                  <td>
-                    {% if obj.logo %}
-                        <img class="row-img" src="{{ obj.logo }}">
-                    {% else %}
-                        <img class="card-img-top" alt="sample">
-                    {% endif %}
-                  </td>
-                  <td>{{ obj.name }}</td>
-                  <td>{{ obj.about }}</td>
-                  <td>
-                      <div class="btn btn-sm btn-success">
-                          subscribe
-                      </div>
-                      <div class="btn btn-sm btn-danger">
-                          unsubscribe
-                      </div>
-                  </td>
+                    <form action="{% url 'confirmation_page' %}" method="get">
+                        {% csrf_token %}
+                        <input class="d-none" type="text" name="product_id" value="{{ obj.id }}"/>
+                        <td>{{ obj.id }}</td>
+                        <td>{{ obj.name }}</td>
+                        <td>
+                            {% if obj.logo %}
+                                <img class="row-img" src="{{ obj.logo }}">
+                            {% else %}
+                                <img class="card-img-top" alt="sample">
+                            {% endif %}
+                        </td>
+                        <td>
+                            <input class="btn btn-sm btn-success" type="submit"
+                              value="subscribe"/>
+                            <input class="btn btn-sm btn-danger" type="submit"
+                              value="unsubscribe"/>
+                        </td>
+                    </form>
                 </tr>
             {% endfor %}
 

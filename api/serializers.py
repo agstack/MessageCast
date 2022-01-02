@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from api.models import APIProduct, User
+from api.models import APIProduct, User, Subscription
 
 
 class UsersSerializer(ModelSerializer):
@@ -15,4 +15,12 @@ class APIProductSerializer(ModelSerializer):
 
     class Meta:
         model = APIProduct
-        fields = ('name', 'about', 'logo', 'active', 'subscribers', )
+        fields = ('id', 'name', 'about', 'logo', 'active', 'subscribers', )
+
+
+class SubscriptionSerializer(ModelSerializer):
+
+    class Meta:
+        model = Subscription
+        fields = ('token', 'user', 'api_product', 'status', )
+
