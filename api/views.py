@@ -96,8 +96,9 @@ class HomeView(TemplateView, LoginRequiredMixin, APIView):
         return context
 
 
-class ConfirmationPageView(TemplateView):
+class ConfirmationPageView(TemplateView, APIView):
     template_name = "confirmation_page.html"
+    permission_classes = [IsAuthenticated]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
