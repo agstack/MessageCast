@@ -1,5 +1,1 @@
-socialaccount_socialtoken
-socialaccount_socialapp_sites
-socialaccount_socialapp
-socialaccount_socialaccount
-django_session
+
