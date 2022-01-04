@@ -4,6 +4,7 @@
     <head>
         <title>Login</title>
         {% include "header.html" %}
+        {% load socialaccount %}
     </head>
     <body class="back">
         {% include "base_generic.html" %}
@@ -29,13 +30,14 @@
                             <td>{{ form.password }}</td>
                         </tr>
                     </table>
-                    <div class="col offset-8 mt-4">
+                    <div class="col mx-auto mt-4 text-right">
                         <input class='btn btn-primary' type="submit" value="login"/>
                         <input type="hidden" name="/home/" value="/home/"/>
                         <a class="btn btn-danger" href="{% url 'register' %}">Create Account</a>
                     </div>
-                    <div class="col offset-8 mt-3">
+                    <div class="col mx-auto mt-3 text-right">
                         <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+{#                        <a href="{% provider_login_url 'google' %}">Login with Google</a>#}
                     </div>
                 </form>
             </div>

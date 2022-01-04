@@ -1,29 +1,43 @@
+from api.models import APIProduct, User, Subscription
+from api.serializers import SubscriptionMonthYearSerializer, SubscriptionCountrySerializer, SubscriptionUsageSerializer
+from django import forms
 from django.contrib import admin
 
-# Register your models here.
-from api.models import APIProduct, User
-
 admin.site.register(User)
+admin.site.register(Subscription)
+
+
+class APIProductAdminnForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(APIProductAdminnForm, self).__init__(*args, **kwargs)
 
 
 class APIProductAdmin(admin.ModelAdmin):
+    change_list_template = 'admin/api/apiproduct/change_list.html'
     list_display = ('name', 'active', )
-    readonly_fields = ('total_subscribers', 'total_subscribers_by_country',
-                       'total_subscribers_by_usage', )
 
-    def total_subscribers(self, obj):
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
 
-        return obj.subscribers.count()
+        objs = Subscription.objects.filter(status=True).all()
 
-    def total_subscribers_by_country(self, obj):
-        total = 0
-        # for itm in obj.subscribers.all():
-        #     itm
-        return total
+        # monthly subscribers histogram
+        objs_json = SubscriptionMonthYearSerializer(objs, many=True).data
+        extra_context['month_year'] = [x['month_year'] for x in objs_json]
 
-    def total_subscribers_by_usage(self, obj):
-        total = 0
-        return total
+        # total subscribers
+        total_subscribers = Subscription.objects.filter(status=True).count()
+        extra_context['total_subscribers'] = total_subscribers
+
+        # total_subscribers_by_country
+        objs_json = SubscriptionCountrySerializer(objs, many=True).data
+        extra_context['by_country'] = [x['country'] for x in objs_json]
+
+        # total_subscribers_by_usage
+        objs_json = SubscriptionUsageSerializer(objs, many=True).data
+        extra_context['by_usage'] = [x['usage'] for x in objs_json]
+
+        return super(APIProductAdmin, self).changelist_view(request, extra_context)
 
 
 admin.site.register(APIProduct, APIProductAdmin)

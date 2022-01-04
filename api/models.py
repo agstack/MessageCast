@@ -16,7 +16,7 @@ class User(AbstractUser):
     address = models.CharField(max_length=255, verbose_name='address', null=True, blank=True)
     city = models.CharField(max_length=255, verbose_name='city', null=True, blank=True)
     state = models.CharField(max_length=255, verbose_name='state', null=True, blank=True)
-    country = models.CharField(max_length=255, verbose_name='country', null=True, blank=True)
+    country = models.CharField(max_length=255, verbose_name='country', null=True, blank=True, default='USA')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -51,4 +51,6 @@ class Subscription(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
 
-
+    def __str__(self):
+        active = 'Active' if self.status else 'Non-Active'
+        return f'{active} - {self.user.username} - {self.api_product.name}'

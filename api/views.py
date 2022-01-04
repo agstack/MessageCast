@@ -1,12 +1,18 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
 from api.utils import send_email
+from django.contrib.auth import (
+    logout as auth_logout
+)
 
 
 class Login(LoginView):
@@ -17,6 +23,16 @@ class Login(LoginView):
 class Logout(LogoutView):
     next_page = '/login/'
     redirect_field_name = '/login/'
+
+    # @method_decorator(never_cache)
+    # def dispatch(self, request, *args, **kwargs):
+    #     request.user
+    #     auth_logout(request)
+    #     next_page = self.get_next_page()
+    #     if next_page:
+    #         # Redirect to this page until the session has been cleared.
+    #         return HttpResponseRedirect(next_page)
+    #     return super().dispatch(request, *args, **kwargs)
 
 
 class Register(TemplateView):
