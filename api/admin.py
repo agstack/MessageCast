@@ -3,6 +3,7 @@ from api.serializers import SubscriptionMonthYearSerializer, SubscriptionCountry
 from django import forms
 from django.contrib import admin
 
+admin.site.site_header = 'Agstack Admin Dashboard'
 admin.site.register(User)
 admin.site.register(Subscription)
 

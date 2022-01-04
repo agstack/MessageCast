@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import random
@@ -39,17 +41,16 @@ class APIProduct(models.Model):
 
 
 class Subscription(models.Model):
-    token = models.CharField(
-        max_length=10,
-        blank=True,
-        editable=False,
-        unique=True,
-        default=generate_token
-    )
+    # this is the uuid
+    token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name='uuid')
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     api_product = models.ForeignKey('APIProduct', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
+
+    name = models.CharField(max_length=255, verbose_name='name', default='', null=True, blank=True)
+    latitude = models.CharField(max_length=255, verbose_name='latitude', default='', null=True, blank=True)
+    longitude = models.CharField(max_length=255, verbose_name='longitude', default='', null=True, blank=True)
 
     def __str__(self):
         active = 'Active' if self.status else 'Non-Active'
