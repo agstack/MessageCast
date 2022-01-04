@@ -6,6 +6,9 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
@@ -76,9 +79,10 @@ class Register(TemplateView):
         return render(request, self.template_name, {'success': 'New User created', 'title': 'Register'})
 
 
-class HomeView(TemplateView, LoginRequiredMixin):
+class HomeView(TemplateView, LoginRequiredMixin, APIView):
     template_name = "home.html"
     login_url = '/login/'
+    permission_classes = [IsAuthenticated]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
