@@ -1,41 +1,24 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.views import View
-from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
 
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
 from api.utils import send_email
-from django.contrib.auth import (
-    logout as auth_logout
-)
 
 
 class Login(LoginView):
     login_url = '/login/'
+    redirect_authenticated_user = True
     redirect_field_name = '/home/'
 
 
 class Logout(LogoutView):
     next_page = '/login/'
     redirect_field_name = '/login/'
-
-    # @method_decorator(never_cache)
-    # def dispatch(self, request, *args, **kwargs):
-    #     request.user
-    #     auth_logout(request)
-    #     next_page = self.get_next_page()
-    #     if next_page:
-    #         # Redirect to this page until the session has been cleared.
-    #         return HttpResponseRedirect(next_page)
-    #     return super().dispatch(request, *args, **kwargs)
 
 
 class Register(TemplateView):
@@ -47,8 +30,10 @@ class Register(TemplateView):
     def post(self, request):
 
         # fetching request parameters
+
+        # username = email
         username = request.POST['username']
-        email = request.POST['email']
+        # email = request.POST['email']
         phone = request.POST['phone']
         usage = request.POST['usage']
         address = request.POST['address']
@@ -60,18 +45,16 @@ class Register(TemplateView):
         # typical registration protocol
         try:
             try:
-                User.objects.get(email=email)
+                User.objects.get(email=username)
                 return render(request, self.template_name, {'errors': 'Email already exists.'})
             except User.DoesNotExist:
-                User.objects.create_user(username=username, password=password, email=email,
+                User.objects.create_user(username=username, password=password, email=username,
                                          phone=phone, usage=usage, address=address, city=city,
                                          state=state, country=country)
         except Exception as e:
             if str(e) == 'UNIQUE constraint failed: users_user.username':
                 return render(request, self.template_name, {'errors': 'Username already taken.'})
             return render(request, self.template_name, {'errors': e})
-        else:
-            return render(request, self.template_name, {'errors': 'Passwords do not match.'})
 
         # send confirmation email
         # twilio integration
@@ -144,7 +127,7 @@ class ConfirmationPageView(TemplateView, APIView):
             obj_subscription.save()
 
             # sending email notification of the subscription
-            msg = f'you have {subscription} to {obj_api_product.name} API'
+            msg = f"""You have {subscription} to {obj_api_product.name} API, please go to URL: \n\n www.agstack.org/?{obj_subscription.name}&lat={obj_subscription.latitude}&lon={obj_subscription.longitude}&uuid={obj_subscription.token}"""
             send_email(msg, user)
 
         # preparing context for template

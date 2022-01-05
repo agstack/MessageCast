@@ -23,7 +23,7 @@ class SubscriptionSerializer(ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = ('token', 'user', 'api_product', 'status', 'created_at', )
+        fields = ('token', 'user', 'api_product', 'status', 'created_at', 'latitude', 'longitude', 'name', )
 
 
 class SubscriptionMonthYearSerializer(ModelSerializer):
