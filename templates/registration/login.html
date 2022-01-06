@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% load socialaccount %}
+
 <html lang="en">
 
     <head>
@@ -37,7 +39,7 @@
                     </div>
                     <div class="col mx-auto mt-3 text-right">
                         <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-{#                        <a href="{% provider_login_url 'google' %}">Login with Google</a>#}
+                        <a href="{% provider_login_url 'google' %}">Login with Google</a>
                     </div>
                 </form>
             </div>
