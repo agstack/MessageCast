@@ -117,7 +117,7 @@ class ConfirmationPageView(TemplateView, APIView):
         prod_id = request.POST.get('product_id')
         # unsubscribe = request.POST.get('unsubscribe')
         subscribe = request.POST.get('subscribe')
-        subscription = 'subcribed' if subscribe else 'unsubscribed'
+        subscription = 'subscribed' if subscribe else 'unsubscribed'
 
         obj_api_product = APIProduct.objects.filter(id=prod_id).first()
         if obj_api_product is not None:
@@ -127,7 +127,7 @@ class ConfirmationPageView(TemplateView, APIView):
             obj_subscription.save()
 
             # sending email notification of the subscription
-            msg = f"""You have {subscription} to {obj_api_product.name} API, please go to URL: \n\n www.agstack.org/?{obj_subscription.name}&lat={obj_subscription.latitude}&lon={obj_subscription.longitude}&uuid={obj_subscription.token}"""
+            msg = f"Thanks for subscribing to {obj_api_product.name} from AgStack. Please note to use the following token in all your API queries. E.g., www.agstack.org/{obj_api_product.name}&lat=<lattitude>&lon=<longitude>&api_token={obj_subscription.token}. Please email any questions to support@agstack.org"
             send_email(msg, user)
 
         # preparing context for template

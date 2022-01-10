@@ -15,7 +15,7 @@
                 <ul class="navbar-nav nav nav-pills" style="margin-left:auto;">
                     <li class="nav-item">
                         <a class="nav-link text-light" href="{% url 'custom_logout' %}?next={{ request.path }}">
-                            Hi, {{ user.username }}
+                            Hi, {{ user.email }}
                             <i class="fa fa-sign-out" aria-hidden="true"></i> &nbsp
                             Log Out
                         </a>

@@ -32,15 +32,20 @@
                             <td>{{ form.password }}</td>
                         </tr>
                     </table>
-                    <div class="col mx-auto mt-4 text-right">
-                        <input class='btn btn-primary' type="submit" value="login"/>
+                    <div class="col mx-auto mt-4 text-center">
+                        <input class='btn btn-primary col-2' type="submit" value="Login"/>
                         <input type="hidden" name="/home/" value="/home/"/>
-                        <a class="btn btn-danger" href="{% url 'register' %}">Create Account</a>
                     </div>
-                    <div class="col mx-auto mt-3 text-right">
+                    <div class="col mx-auto mt-1 text-center">
+                        <a class="btn btn-danger col-2" href="{% url 'register' %}">Create Account</a>
+                    </div>
+                    <div class="col mx-auto mt-3 text-center">
+                        <a class="btn btn-outline-danger rounded-5 col-2" href="{% provider_login_url 'google' %}">Login with Google</a>
+                    </div>
+                    <div class="col mx-auto mt-1 text-center">
                         <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-                        <a href="{% provider_login_url 'google' %}">Login with Google</a>
                     </div>
+
                 </form>
             </div>
         </div>
