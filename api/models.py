@@ -21,6 +21,9 @@ class User(AbstractUser):
     country = models.CharField(max_length=255, verbose_name='country', null=True, blank=True, default='USA')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    latitude = models.CharField(max_length=255, verbose_name='latitude', null=True, blank=True)
+    longitude = models.CharField(max_length=255, verbose_name='longitude', null=True, blank=True)
+    h3_index = models.CharField(max_length=255, verbose_name='h3_index', null=True, blank=True)
 
     def __str__(self):
         return 'User: ' + str(self.username)

@@ -1,9 +1,11 @@
+import h3
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from ip2geotools.databases.noncommercial import DbIpCity
 
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
@@ -29,7 +31,13 @@ class Register(TemplateView):
 
     def post(self, request):
 
-        # fetching request parameters
+        # fetching geo-spatial data
+        ip = request.META.get('REMOTE_ADDR')
+
+        response = DbIpCity.get(ip, api_key='free')
+        lat = response.latitude
+        long = response.longitude
+        h3_index = h3.geo_to_h3(lat, long, 12)
 
         # username = email
         username = request.POST['username']
@@ -50,7 +58,8 @@ class Register(TemplateView):
             except User.DoesNotExist:
                 User.objects.create_user(username=username, password=password, email=username,
                                          phone=phone, usage=usage, address=address, city=city,
-                                         state=state, country=country)
+                                         state=state, country=country, latitude=lat, longitude=long,
+                                         h3_index=h3_index)
         except Exception as e:
             if str(e) == 'UNIQUE constraint failed: users_user.username':
                 return render(request, self.template_name, {'errors': 'Username already taken.'})
