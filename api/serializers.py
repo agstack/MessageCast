@@ -8,7 +8,7 @@ from api.models import APIProduct, User, Subscription
 class UsersSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'phone', 'email', 'usage', 'address', 'city', 'state', )
+        fields = ('username', 'phone', 'email', 'usage', 'region', 'city', 'country', )
 
 
 class APIProductSerializer(ModelSerializer):

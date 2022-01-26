@@ -1,4 +1,6 @@
 import h3
+import ip2geotools
+import s2sphere as s2
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render
@@ -34,20 +36,10 @@ class Register(TemplateView):
         # fetching geo-spatial data
         ip = request.META.get('REMOTE_ADDR')
 
-        response = DbIpCity.get(ip, api_key='free')
-        lat = response.latitude
-        long = response.longitude
-        h3_index = h3.geo_to_h3(lat, long, 12)
-
         # username = email
         username = request.POST['username']
-        # email = request.POST['email']
         phone = request.POST['phone']
         usage = request.POST['usage']
-        address = request.POST['address']
-        city = request.POST['city']
-        state = request.POST['state']
-        country = request.POST['country']
         password = request.POST['password']
 
         # typical registration protocol
@@ -56,10 +48,8 @@ class Register(TemplateView):
                 User.objects.get(email=username)
                 return render(request, self.template_name, {'errors': 'Email already exists.'})
             except User.DoesNotExist:
-                User.objects.create_user(username=username, password=password, email=username,
-                                         phone=phone, usage=usage, address=address, city=city,
-                                         state=state, country=country, latitude=lat, longitude=long,
-                                         h3_index=h3_index)
+                User.objects.create_user(username=username, password=password, email=username, ip=ip,
+                                         phone=phone, usage=usage)
         except Exception as e:
             if str(e) == 'UNIQUE constraint failed: users_user.username':
                 return render(request, self.template_name, {'errors': 'Username already taken.'})
