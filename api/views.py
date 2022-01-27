@@ -1,14 +1,9 @@
-import h3
-import ip2geotools
-import s2sphere as s2
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from ip2geotools.databases.noncommercial import DbIpCity
-
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
 from api.utils import send_email
