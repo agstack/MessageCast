@@ -39,16 +39,17 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         try:
             # H3 index implementation
-            response = DbIpCity.get(self.ip, api_key='free')
+            if self.ip:
+                response = DbIpCity.get(self.ip, api_key='free')
 
-            self.latitude = response.latitude
-            self.longitude = response.longitude
-            self.city = response.city
-            self.region = response.region
-            self.country = response.country
+                self.latitude = response.latitude
+                self.longitude = response.longitude
+                self.city = response.city
+                self.region = response.region
+                self.country = response.country
 
-            self.h3_index = h3.geo_to_h3(self.latitude, self.longitude, self.h3_resolution)
-        except ip2geotools.errors.InvalidRequestError or ConnectionError:
+                self.h3_index = h3.geo_to_h3(self.latitude, self.longitude, self.h3_resolution)
+        except ip2geotools.errors.InvalidRequestError or ConnectionError or Exception as e:
             pass
 
         try:
