@@ -48,14 +48,14 @@ class User(AbstractUser):
                 self.region = response.region
                 self.country = response.country
 
-                self.h3_index = h3.geo_to_h3(self.latitude, self.longitude, self.h3_resolution)
+                self.h3_index = h3.geo_to_h3(self.latitude, self.longitude, int(self.h3_resolution))
         except ip2geotools.errors.InvalidRequestError or ConnectionError or Exception as e:
             pass
 
         try:
             # S2 implementation
             cell = s2.Cell.from_lat_lng(s2.LatLng.from_degrees(self.latitude, self.longitude))
-            cid = cell.id().parent(self.s2_level)
+            cid = cell.id().parent(int(self.s2_level))
             self.s2_index = cid.to_token()
         except:
             pass
