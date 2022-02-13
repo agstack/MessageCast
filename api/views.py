@@ -36,6 +36,7 @@ class Register(TemplateView):
         phone = request.POST['phone']
         usage = request.POST['usage']
         password = request.POST['password']
+        discoverable = True if request.POST.get('discoverable') == 'on' else False
 
         # typical registration protocol
         try:
@@ -44,7 +45,7 @@ class Register(TemplateView):
                 return render(request, self.template_name, {'errors': 'Email already exists.'})
             except User.DoesNotExist:
                 User.objects.create_user(username=username, password=password, email=username, ip=ip,
-                                         phone=phone, usage=usage)
+                                         phone=phone, usage=usage, discoverable=discoverable)
         except Exception as e:
             if str(e) == 'UNIQUE constraint failed: users_user.username':
                 return render(request, self.template_name, {'errors': 'Username already taken.'})

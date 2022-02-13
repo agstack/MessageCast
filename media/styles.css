@@ -14,6 +14,14 @@
 }
 
 
+.check-focus:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.logo-box {
+  height: 90px;
+}
 
 .row-img {
     height: 75px;

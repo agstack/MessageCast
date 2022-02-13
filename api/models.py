@@ -32,33 +32,35 @@ class User(AbstractUser):
     h3_resolution = models.CharField(max_length=255, verbose_name='h3_resolution', default=12)
     s2_index = models.CharField(max_length=255, verbose_name='s2_index', null=True, blank=True)
     s2_level = models.CharField(max_length=255, verbose_name='s2_level', default=20)
+    discoverable = models.BooleanField(default=False)
 
     def __str__(self):
         return 'User: ' + str(self.username)
 
     def save(self, *args, **kwargs):
-        try:
-            # H3 index implementation
-            if self.ip:
-                response = DbIpCity.get(self.ip, api_key='free')
+        if self.discoverable:
+            try:
+                # H3 index implementation
+                if self.ip:
+                    response = DbIpCity.get(self.ip, api_key='free')
 
-                self.latitude = response.latitude
-                self.longitude = response.longitude
-                self.city = response.city
-                self.region = response.region
-                self.country = response.country
+                    self.latitude = response.latitude
+                    self.longitude = response.longitude
+                    self.city = response.city
+                    self.region = response.region
+                    self.country = response.country
 
-                self.h3_index = h3.geo_to_h3(self.latitude, self.longitude, int(self.h3_resolution))
-        except ip2geotools.errors.InvalidRequestError or ConnectionError or Exception as e:
-            pass
+                    self.h3_index = h3.geo_to_h3(self.latitude, self.longitude, int(self.h3_resolution))
+            except ip2geotools.errors.InvalidRequestError or ConnectionError or Exception as e:
+                pass
 
-        try:
-            # S2 implementation
-            cell = s2.Cell.from_lat_lng(s2.LatLng.from_degrees(self.latitude, self.longitude))
-            cid = cell.id().parent(int(self.s2_level))
-            self.s2_index = cid.to_token()
-        except:
-            pass
+            try:
+                # S2 implementation
+                cell = s2.Cell.from_lat_lng(s2.LatLng.from_degrees(self.latitude, self.longitude))
+                cid = cell.id().parent(int(self.s2_level))
+                self.s2_index = cid.to_token()
+            except:
+                pass
         super().save(*args, **kwargs)
 
 

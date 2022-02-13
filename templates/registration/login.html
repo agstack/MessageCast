@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load socialaccount %}
+{% load static %}
 
 <html lang="en">
 
@@ -15,6 +16,9 @@
 
         <div class="container">
 
+            <div class="d-flex justify-content-center logo-box">
+                <img src="{% static 'logo.png' %}">
+            </div>
             <h3 class="d-flex justify-content-center">Login</h3>
             <div class="jumbotron m-5">
                 {% if form.errors %}
@@ -22,6 +26,7 @@
                 {% endif %}
                 <form class="" method="post" action="{% url 'custom_login' %}">
                     {% csrf_token %}
+
                     <table class="col-4 offset-4">
                         <tr class="">
                             <td>Username/Email:</td>
