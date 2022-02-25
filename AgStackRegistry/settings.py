@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'channels',
+    'chat',
     'api',
     'allauth',
     'allauth.account',
@@ -103,8 +105,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-WSGI_APPLICATION = 'AgStackRegistry.wsgi.application'
-
+ASGI_APPLICATION = "AgStackRegistry.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -167,3 +168,13 @@ try:
     from .local_settings import *
 except ImportError:
     pass
+
+ASGI_APPLICATION = 'AgStackRegistry.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
