@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
 from api.utils import send_email
+from chat.models import Chat
+from chat.serializers import ChatSerializer
 
 
 class Login(LoginView):
@@ -93,7 +95,17 @@ class ConfirmationPageView(TemplateView, APIView):
         # getting request parameters
         user = request.user
         prod_id = request.GET.get('product_id')
+        room = request.GET.get('chat')
         obj_api_product = APIProduct.objects.filter(id=prod_id).first()
+
+        # redirect to room
+        if room:
+            chat_objs = Chat.objects.filter(chat_room_id=prod_id).order_by('created_at')
+            chat_messages = ChatSerializer(chat_objs, many=True).data
+            return render(request, 'chat/room.html', {
+                'room_name': obj_api_product.name,
+                'chat_messages': [f"{cm['message']} - {cm['username']} - {cm['created_at']} - {cm['city']}, {cm['region']}, {cm['country']}" for cm in chat_messages]
+            })
 
         # creating or fetching subscription object
         obj_subscription, created = Subscription.objects.get_or_create(user=user, api_product=obj_api_product)

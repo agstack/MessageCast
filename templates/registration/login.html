@@ -27,22 +27,29 @@
                 <form class="" method="post" action="{% url 'custom_login' %}">
                     {% csrf_token %}
 
-                    <table class="col-4 offset-4">
-                        <tr class="">
-                            <td>Username/Email:</td>
-                            <td>{{ form.username }}</td>
-                        </tr>
-                        <tr class="">
-                            <td>{{ form.password.label_tag }}</td>
-                            <td>{{ form.password }}</td>
-                        </tr>
+                    <table class="d-flex justify-content-center">
+                        <tr><td>
+                            Username
+                        </td></tr>
+                        <tr><td>
+                            {{ form.username }}
+                        </td></tr>
+                    </table>
+                    <table class="d-flex justify-content-center mt-2">
+                        <tr><td>
+                            Password
+                        </td></tr>
+                        <tr><td>
+                            {{ form.password }}
+                        </td></tr>
                     </table>
                     <div class="col mx-auto mt-4 text-center">
                         <input class='btn btn-primary col-2' type="submit" value="Login"/>
                         <input type="hidden" name="/home/" value="/home/"/>
                     </div>
                     <div class="col mx-auto mt-1 text-center">
-                        <a class="btn btn-danger col-2" href="{% url 'register' %}">Create Account</a>
+                        <a class="btn btn-danger col-2" href="{% url 'register' %}"
+                           style="word-wrap: break-word; white-space: normal !important;">Create Account</a>
                     </div>
 {#                    <div class="col mx-auto mt-3 text-center">#}
 {#                        <a class="btn btn-outline-danger rounded-5 col-2" href="{% provider_login_url 'google' %}">Login with Google</a>#}
