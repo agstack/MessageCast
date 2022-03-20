@@ -7,6 +7,15 @@
 <body>
     {% include 'navbar.html' %}
     <div class="container">
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+            {% elif success %}
+            <div class="alert alert-success">
+                {{ success }}
+            </div>
+        {% endif %}
         <table class="table table-striped w-75 mx-auto">
           <thead>
             <tr>
@@ -14,6 +23,7 @@
               <th scope="col">Topic</th>
               <th scope="col">Logo</th>
               <th scope="col">Subscription</th>
+              <th scope="col">Invite</th>
             </tr>
           </thead>
           <tbody>
@@ -38,6 +48,11 @@
                               name="unsubscribe" value="unsubscribe"/>
                             <input class="btn btn-sm btn-dark" type="submit"
                               name="chat" value="chat"/>
+                        </td>
+                        <td>
+                            <input type="text" name="invite_email" value="">
+                            <input class="btn btn-sm btn-primary" type="submit"
+                              name="invite" value="invite"/>
                         </td>
                     </form>
                 </tr>

@@ -1,10 +1,10 @@
 import time
 from rest_framework import serializers
 
-from chat.models import Chat
+from chat.models import Message
 
 
-class ChatSerializer(serializers.ModelSerializer):
+class MessageSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
     city = serializers.CharField(source='user.city')
     country = serializers.CharField(source='user.country')
@@ -14,5 +14,5 @@ class ChatSerializer(serializers.ModelSerializer):
     def get_created_at(self, obj): return obj.created_at.strftime('%Y-%m-%d %H:%M')
 
     class Meta:
-        model = Chat
-        fields = ('message', 'username', 'created_at', 'city', 'country', 'region')
+        model = Message
+        fields = ('description', 'username', 'created_at', 'city', 'country', 'region')

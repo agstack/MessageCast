@@ -5,8 +5,8 @@ from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from api.models import APIProduct
-from chat.models import Chat
-from chat.serializers import ChatSerializer
+from chat.models import Message
+from chat.serializers import MessageSerializer
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -35,15 +35,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        chat_room = text_data_json['roomName']
+        topic = text_data_json['roomName']
         user = self.user
 
         if message.rstrip() != '':
 
             try:
-                api_product = await sync_to_async(APIProduct.objects.get, thread_sensitive=True)(name=chat_room)
-                results = await sync_to_async(Chat.objects.create, thread_sensitive=True)(user=user, message=message,
-                                                                                          chat_room=api_product)
+                api_product = await sync_to_async(APIProduct.objects.get, thread_sensitive=True)(name=topic)
+                results = await sync_to_async(Message.objects.create, thread_sensitive=True)(user=user, description=message,
+                                                                                             topic=api_product)
                 # Send message to WebSocket
             except APIProduct.DoesNotExist as e:
                 # This chat-room does not exist
@@ -57,6 +57,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': message,
                     'room_name': self.room_name,
                     'username': user.username,
+                    'city': user.city,
+                    'region': user.region,
+                    'country': user.country,
                     'created_at': f"{datetime.now().strftime('%Y-%m-%d %H:%M')}",
                 }
             )
@@ -65,10 +68,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         message = event['message']
         username = event['username']
+        city = event['city']
+        region = event['region']
+        country = event['country']
         created_at = event['created_at']
         # user = self.user.username
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
-            'message': f"{message} - {username} - {created_at}"
+            'message': f"{message} - {username} - {created_at} -  {city}, {region}, {country}"
         }))
