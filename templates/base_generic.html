@@ -1,4 +1,6 @@
 <ul class="sidebar-nav d-none">
+{% load pwa %}
+{% progressive_web_app_meta %}
 
     {% if user.is_authenticated %}
         <li class="d-none"><a href="{% url 'logout' %}?next={{ request.path }}"></a></li>

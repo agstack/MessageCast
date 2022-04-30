@@ -21,3 +21,7 @@ Using postgres database
 
 
 msg (username-timestamp-geolocation)
+
+
+
+Django 4.0 was not compatible with django-pwa, so downgraded Django to 3.2

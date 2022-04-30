@@ -5,7 +5,6 @@ venv
 .idea
 db.sqlite3
 local_settings.py
-static
 .DS_Store
 boot/
 uploads/

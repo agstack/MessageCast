@@ -4,12 +4,13 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from AgStackRegistry.local_settings import EMAIL_HOST_USER, BASE_URL
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
 from api.utils import send_email
-from chat.models import Message
+from chat.models import Message, Tag
 from chat.serializers import MessageSerializer
 
 
@@ -93,7 +94,7 @@ class ConfirmationPageView(TemplateView, APIView):
         context['title'] = 'ConfirmationPage'
         return context
 
-    def set_email_text(self, user, obj_api_product, user_invite_obj):
+    def invite_user_text(self, user, obj_api_product, user_invite_obj):
         url = BASE_URL + 'confirmation_page/?product_id=1&chat=chat&invite_email='
         msg = f"Hi {user_invite_obj.first_name},\n\n" \
               f"This is {user.get_full_name()}. There is a topic called '{obj_api_product.name}' " \
@@ -107,6 +108,25 @@ class ConfirmationPageView(TemplateView, APIView):
 
 %s
         """ % ('Interesting topic on AgStack chat!', msg)
+
+        return email_text
+
+    def invite_to_agstack_text(self, user, user_invite_obj):
+        url = BASE_URL + 'register'
+        msg = f"Hi {user_invite_obj.first_name},\n\n" \
+              f"This is {user.get_full_name()}. I would like to invite you to join AgStack, an open-source digital " \
+              f"infrastructure for the agriculture ecosystem! AgStack is a Linux Foundation project launched in " \
+              f"2021 to help improve global agriculture efficiency through the creation, maintenance and enhancement " \
+              f"of free, reusable, open and specialized digital infrastructure for data and applications. You can " \
+              f"learn more about AgStack at " \
+              f"{url}\n\n" \
+              f"Best Regards,\n" \
+              f"{user.first_name}\n"
+
+        email_text = """Subject: %s
+
+%s
+        """ % ('Invitation to join AgStack, an Open-Source Digital Infrastructure for the Agriculture Ecosystem!', msg)
 
         return email_text
 
@@ -124,7 +144,7 @@ class ConfirmationPageView(TemplateView, APIView):
             user_invite_obj = User.objects.filter(email=invite_email).first()
             if user_invite_obj:
                 # email user if email exists
-                email_text = self.set_email_text(user, obj_api_product, user_invite_obj)
+                email_text = self.invite_user_text(user, obj_api_product, user_invite_obj)
                 send_email(email_text, user_invite_obj)
                 objs = APIProduct.objects.all()
                 return render(request, 'home.html', {
@@ -132,6 +152,8 @@ class ConfirmationPageView(TemplateView, APIView):
                     'api_products': APIProductSerializer(objs, many=True).data
                 })
             else:
+                email_text = self.invite_to_agstack_text(user, user_invite_obj)
+                send_email(email_text, user_invite_obj)
                 objs = APIProduct.objects.all()
                 return render(request, 'home.html', {
                     'error': 'user doesn’t exist',
@@ -142,9 +164,10 @@ class ConfirmationPageView(TemplateView, APIView):
         if room:
             chat_objs = Message.objects.filter(topic_id=prod_id).order_by('created_at')
             chat_messages = MessageSerializer(chat_objs, many=True).data
+            # chat_messages = [[message1, upvote1, downvote1], [message2, upvote2, downvote2], ....]
             return render(request, 'chat/room.html', {
                 'room_name': obj_api_product.name,
-                'chat_messages': [f"{cm['description']} - {cm['username']} - {cm['created_at']} - {cm['city']}, {cm['region']}, {cm['country']}" for cm in chat_messages]
+                'chat_messages': [[cm['id'], f"{cm['description']} - {cm['username']} - {cm['created_at']} - {cm['city']}, {cm['region']}, {cm['country']}", cm['upvote'], cm['downvote']] for cm in chat_messages]
             })
 
         # creating or fetching subscription object
@@ -184,3 +207,32 @@ class ConfirmationPageView(TemplateView, APIView):
             'status': 'Your subscription status has been updated',
         }
         return render(request, self.template_name, context)
+
+
+class ManageVoting(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = self.request.user
+        chat_id = request.data.get('chat_id')
+        voting_type = request.data.get('voting_type')
+        msg_obj = Message.objects.filter(id=chat_id).order_by('created_at').first()
+
+        if (user not in msg_obj.upvoters.all()) and (user not in msg_obj.downvoters.all()):
+            if voting_type == 'upvote':
+                msg_obj.upvote += 1
+                msg_obj.upvoters.add(self.request.user)
+                msg_obj.save()
+                return Response({'status': True})
+            elif voting_type == 'downvote':
+                msg_obj.downvote += 1
+                msg_obj.downvoters.add(self.request.user)
+                msg_obj.save()
+                return Response({'status': True})
+
+        return Response({'status': False})
+
+
+def home_test(request):
+    languages = Tag.objects.all()
+    return render(request,'test.html',{"languages":languages})

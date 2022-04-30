@@ -9,7 +9,7 @@
 <body>
     {% include 'navbar.html' %}
     <div class="container">
-        <h4>Chat Area</h4>
+        <h4>Topic Area</h4>
         <div class="row">
             <div readonly id="chat-log" cols="100" rows="20"></div><br>
 {#            <textarea readonly id="chat-log" cols="100" rows="20"></textarea><br>#}
@@ -19,11 +19,9 @@
                 <input id="chat-message-input" type="text" size="100"><br>
             </div>
             <div class="col-1 justify-content-end d-flex">
-                <input class="btn btn-primary" id="chat-message-submit" type="button" value="Send">
-                <form >
-                    <input type="file" id="uploadFile" style="display: none;" />
-                    <input type="button" value="Upload" onclick="document.getElementById('uploadFile').click();" />
-                </form>
+                <input type="file" id="uploadFile" style="display: none;" />
+                <input type="button" value="Upload" onclick="document.getElementById('uploadFile').click();" />
+                <input class="btn btn-primary ml-2" id="chat-message-submit" type="button" value="Send">
             </div>
         </div>
         {{ room_name|json_script:"room-name" }}
@@ -47,8 +45,8 @@
         document.querySelector('#chat-log').innerHTML +=
             "<div class='m-2 p-1 rounded w-50' style='background: lightgrey'>"+
             (data.message + '\n')+
-            "<button type='button' class='btn btn-success btn-sm mx-2'>&#8593<span class='badge badge-dark badge-sm'>4</span></button>"+
-            "<button type='button' class='btn btn-danger btn-sm mx-2'>&#8595<span class='badge badge-dark badge-sm'>4</span></button>"+
+            "<button type='button' onclick='upvote_counter("+(data.id)+")' class='btn btn-success btn-sm mx-2'>&#8593<span id='u"+(data.id)+"' class='badge badge-dark badge-sm'>"+(data.upvote)+"</span></button>"+
+            "<button type='button' onclick='downvote_counter("+(data.id)+")' class='btn btn-danger btn-sm mx-2'>&#8595<span id='d"+(data.id)+"' class='badge badge-dark badge-sm'>"+(data.downvote)+"</span></button>"+
             "</div>";
     };
 
@@ -80,23 +78,52 @@
       {#textarea.innerText += {{chat_messages|safe}}[i]+ "\r\n";#}
       divHTML.innerHTML +=
           "<div class='m-2 p-1 rounded w-50' style='background: lightgrey'>"+
-          {{chat_messages|safe}}[i] +
-          "<button type='button' class='btn btn-success btn-sm mx-2'>&#8593<span class='badge badge-dark badge-sm'>4</span></button>"+
-          "<button type='button' class='btn btn-danger btn-sm mx-2'>&#8595<span class='badge badge-dark badge-sm'>4</span></button>"+
+          {{chat_messages|safe}}[i][1] +
+          {#"<button type='button' onclick='document.getElementById("+{{chat_messages|safe}}[i][0]+").innerHTML = parseInt(document.getElementById("+{{chat_messages|safe}}[i][0]+").textContent)+1;upvote_counter("+{{chat_messages|safe}}[i][0]+")' name='upvote' value='upvote' onclick='upvote_counter("+i+")' class='btn btn-success btn-sm mx-2'>&#8593<span id="+{{chat_messages|safe}}[i][0]+" class='badge badge-dark badge-sm'>"+{{chat_messages|safe}}[i][2]+"</span></button>"+#}
+          "<button type='button' onclick='upvote_counter("+{{chat_messages|safe}}[i][0]+")' class='btn btn-success btn-sm mx-2'>&#8593<span id='u"+{{chat_messages|safe}}[i][0]+"' class='badge badge-dark badge-sm'>"+{{chat_messages|safe}}[i][2]+"</span></button>"+
+          "<button type='button' onclick='downvote_counter("+{{chat_messages|safe}}[i][0]+")' class='btn btn-danger btn-sm mx-2'>&#8595<span id='d"+{{chat_messages|safe}}[i][0]+"' class='badge badge-dark badge-sm'>"+{{chat_messages|safe}}[i][3]+"</span></button>"+
           "</div>\r\n";
     }
 
     {#scroll to bottom#}
     {#textarea.scrollTop = textarea.scrollHeight#}
 </script>
-{#<script>#}
-{#    const textarea = document.getElementById('chat-log');#}
-{#    for (let i = 0; i < {{ chat_messages|safe }}.length; i++) {#}
-      {#textarea.innerText += {{chat_messages|safe}}[i]+ "\r\n";#}
-{#      textarea.value += {{chat_messages|safe}}[i] + "\r\n";#}
-{#    }#}
-{##}
-    {#scroll to bottom#}
-{#    textarea.scrollTop = textarea.scrollHeight#}
-{#</script>#}
+<script>
+    const predictiveOptions = [{"tag": "Alfalfa"},{"tag": "Almond"},{"tag": "Apple"}]
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    function upvote_counter(chat_id) {
+        {#window.open(url);#}
+        var chatid = 'u'+chat_id;
+        console.log(chatid)
+
+        $.post({% url 'voting' %}, {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            chat_id: chat_id,
+            voting_type: 'upvote',
+        }, function (data) {
+            console.log("upvoted!");
+            if (data.status) {
+                document.getElementById(chatid).innerHTML = parseInt(document.getElementById(chatid).textContent)+1
+            }
+        })
+    }
+    function downvote_counter(chat_id) {
+        {#window.open(url);#}
+        var chatid = 'd'+chat_id;
+        console.log(chatid)
+
+        $.post({% url 'voting' %}, {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            chat_id: chat_id,
+            voting_type: 'downvote',
+        }, function (data) {
+            console.log("downvoted!");
+            if (data.status) {
+                document.getElementById(chatid).innerHTML = parseInt(document.getElementById(chatid).textContent)+1
+            }
+        })
+    }
+</script>
 </html>
