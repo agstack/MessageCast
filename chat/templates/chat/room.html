@@ -25,8 +25,48 @@
             </div>
         </div>
         {{ room_name|json_script:"room-name" }}
-
+        <br/>
+        <br/>
+        <label>Multiselect: <input type="text" id="multiselect"></label>
+        <button type="button" id="submit_multiselect">Submit</button>
     </div>
+    <script src="multiselect.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="multiselect.css">
+    <script>
+        const mySellect = sellect("#multiselect", {
+            originList: ['banana', 'apple', 'pineapple', 'papaya', 'grape', 'orange', 'grapefruit', 'guava', 'watermelon', 'melon'],
+            destinationList: ['banana', 'papaya', 'grape', 'orange', 'guava']
+        });
+        mySellect.init();
+
+        function toBase64 (file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            })
+        } 
+
+        document.querySelector('#submit_multiselect').onclick = function() {
+            console.log(mySellect.getSelected())
+        };
+
+        document.querySelector('#chat-message-submit').onclick = async function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const file = document.getElementById("uploadFile").files[0];
+            const message = messageInputDom.value;
+            
+            const fileInBase64 = await toBase64(file)
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                file: fileInBase64
+                // 'roomName': roomName,
+            }));
+            messageInputDom.value = '';
+        }
+
+    </script>
 </body>
 <script>
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
