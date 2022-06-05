@@ -1,7 +1,7 @@
 import time
 from rest_framework import serializers
 
-from chat.models import Message
+from chat.models import Message, Tag
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -15,4 +15,15 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ('id', 'description', 'username', 'created_at', 'city', 'country', 'region', 'upvote', 'downvote')
+        fields = ('id', 'description', 'username', 'created_at', 'city', 'country', 'region', 'upvote', 'downvote',
+                  'file', )
+
+
+class TagSerializer(serializers.ModelSerializer):
+    tag = serializers.CharField(source='tag_text')
+
+    class Meta:
+        model = Tag
+        fields = ('tag', )
+
+

@@ -1,3 +1,5 @@
+import os
+import uuid
 from django.db import models
 from django.db.models import ManyToManyField
 
@@ -6,6 +8,12 @@ from api.models import User, APIProduct
 
 class Tag(models.Model):
     tag_text = models.CharField(max_length=2000, verbose_name='tag_text')
+
+
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('message_images', filename)
 
 
 class Message(models.Model):
@@ -20,5 +28,5 @@ class Message(models.Model):
     downvote = models.IntegerField(default=0)
     upvoters = ManyToManyField(User, null=True, blank=True, related_name='upvoters')
     downvoters = ManyToManyField(User, null=True, blank=True, related_name='downvoters')
-
+    file = models.FileField(upload_to=get_file_path, default=None, null=True)
 

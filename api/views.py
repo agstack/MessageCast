@@ -11,7 +11,7 @@ from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer
 from api.utils import send_email
 from chat.models import Message, Tag
-from chat.serializers import MessageSerializer
+from chat.serializers import MessageSerializer, TagSerializer
 
 
 class Login(LoginView):
@@ -130,6 +130,9 @@ class ConfirmationPageView(TemplateView, APIView):
 
         return email_text
 
+    def update_tags_list(self, d):
+        return {'tag': d['tag']}
+
     def get(self, request):
         # getting request parameters
         user = request.user
@@ -165,9 +168,29 @@ class ConfirmationPageView(TemplateView, APIView):
             chat_objs = Message.objects.filter(topic_id=prod_id).order_by('created_at')
             chat_messages = MessageSerializer(chat_objs, many=True).data
             # chat_messages = [[message1, upvote1, downvote1], [message2, upvote2, downvote2], ....]
+            msgs = []
+            for cm in chat_messages:
+                temp_msg = []
+                temp_msg.append(cm['id'])
+                temp_msg.append(f"{cm['description']} - {cm['username']} - {cm['created_at']} - {cm['city']}, {cm['region']}, {cm['country']}")
+                temp_msg.append(cm['upvote'])
+                temp_msg.append(cm['downvote'])
+                if cm['file']:
+                    temp_msg.append(cm['file'])
+                else:
+                    temp_msg.append('')
+                msgs.append(temp_msg)
+
+            tag_objs = Tag.objects.all()
+
+            tags_serialized = TagSerializer(tag_objs, many=True).data
+
+            tags = list(map(self.update_tags_list, tags_serialized))
+
             return render(request, 'chat/room.html', {
                 'room_name': obj_api_product.name,
-                'chat_messages': [[cm['id'], f"{cm['description']} - {cm['username']} - {cm['created_at']} - {cm['city']}, {cm['region']}, {cm['country']}", cm['upvote'], cm['downvote']] for cm in chat_messages]
+                'chat_messages': msgs,
+                'tags': tags
             })
 
         # creating or fetching subscription object
