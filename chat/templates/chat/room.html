@@ -287,8 +287,8 @@
             var startIndex = value.substr(0, selectionStart).lastIndexOf("#")
             var selectedPart = value.substring(startIndex, selectionStart)
             var selectedTag = selectedPart.includes(" ") ? "" : selectedPart
-            
-            if (selectedTag) {
+
+            if (selectedTag.includes("#")) {
                 var substr = selectedTag.replace("#", "")
 
                 if (substr.length) {
