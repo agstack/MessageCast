@@ -1,26 +1,16 @@
 var staticCacheName = 'djangopwa-v1';
 
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(staticCacheName).then(function(cache) {
-      return cache.addAll([
-        '',
-      ]);
-    })
-  );
-});
-
-self.addEventListener('fetch', function(event) {
-  var requestUrl = new URL(event.request.url);
-    if (requestUrl.origin === location.origin) {
-      if ((requestUrl.pathname === '/')) {
-        event.respondWith(caches.match(''));
-        return;
-      }
-    }
-    event.respondWith(
-      caches.match(event.request).then(function(response) {
-        return response || fetch(event.request);
-      })
-    );
-});
+self.oninstall = function (evt) {
+    evt.waitUntil(caches.open(staticCacheName).then(function (cache) {
+        return Promise.all(['/', '/home'].map(function (url) {
+            return fetch(new Request(url, { redirect: 'manual' })).then(function (res) {
+                return cache.put(url, res);
+            });
+        }));
+    }));
+};
+self.onfetch = function (evt) {
+    var url = new URL(evt.request.url);
+    if (url.pathname != '/' && url.pathname != '/home') return;
+    evt.respondWith(caches.match(evt.request, { cacheName: staticCacheName }));
+};
