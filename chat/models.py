@@ -11,9 +11,12 @@ class Tag(models.Model):
 
 
 def get_file_path(instance, filename):
-    ext = filename.split('.')[-1]
+    directory = filename.split('/')[0]
+    file_name = filename.split('/')[1]
+    ext = file_name.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('message_images', filename)
+    # saving the image in a directory under the topic
+    return os.path.join('message_images', f"{directory}/{filename}")
 
 
 class Message(models.Model):

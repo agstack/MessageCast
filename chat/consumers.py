@@ -3,6 +3,7 @@ from PIL import Image
 import io
 import json
 from datetime import datetime
+from django.core.files.base import ContentFile
 
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -57,61 +58,62 @@ class ChatConsumer(AsyncWebsocketConsumer):
         file = text_data_json.get('file')
         user = self.user
 
-        if message.rstrip() != '':
-
-            try:
+        try:
+            ls_tags = []
+            if message.rstrip() != '':
                 ls_tags = await self.parse_and_add_tags(message)
 
-                from django.core.files.base import ContentFile
-                if file:
-                    format, imgstr = file.split(';base64,')
-                    ext = format.split('/')[-1]
+            if file:
+                format, imgstr = file.split(';base64,')
+                ext = format.split('/')[-1]
 
-                    file_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-                    file_data.name = file_data.name
-                else:
-                    file_data = None
+                file_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+                file_data.name = f"{topic}/{file_data.name}"
+            else:
+                file_data = None
 
-                # save image under message_images
-                # image = base64.b64decode(file)
-                # file_name = 'test.jpeg'
-                # attachment_name = default_storage.save('message_images/{0}'.format(file.name), file) if file else ''
+            # save image under message_images
+            # image = base64.b64decode(file)
+            # file_name = 'test.jpeg'
+            # attachment_name = default_storage.save('message_images/{0}'.format(file.name), file) if file else ''
 
-                # image_path = (f'message_images/{file_name}/')
-                # img = Image.open(io.BytesIO(image))
-                # img.save(image_path, 'jpeg')
+            # image_path = (f'message_images/{file_name}/')
+            # img = Image.open(io.BytesIO(image))
+            # img.save(image_path, 'jpeg')
 
-                api_product = await sync_to_async(APIProduct.objects.get, thread_sensitive=True)(name=topic)
-                results = await sync_to_async(Message.objects.create, thread_sensitive=True)(user=user, description=message,
-                                                                                             topic=api_product,
-                                                                                             file=file_data)
+            api_product = await sync_to_async(APIProduct.objects.get, thread_sensitive=True)(name=topic)
+            results = await sync_to_async(Message.objects.create, thread_sensitive=True)(user=user, description=message,
+                                                                                         topic=api_product,
+                                                                                         file=file_data)
+            # if the message was not empty then add the list of parsed tags into the list
+            if ls_tags:
                 await sync_to_async(results.message_tags.add, thread_sensitive=True)(*ls_tags)
                 await sync_to_async(results.save, thread_sensitive=True)()
 
 
-                # Send message to WebSocket
-            except APIProduct.DoesNotExist as e:
-                # This chat-room does not exist
-                pass
+            # Send message to WebSocket
+        except APIProduct.DoesNotExist as e:
+            # This chat-room does not exist
+            pass
 
-            # Send message to room group
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'chat_message',
-                    'id': results.id,
-                    'message': message,
-                    'upvote': upvote,
-                    'downvote': downvote,
-                    'room_name': self.room_name,
-                    'file': results.file.name,
-                    'username': user.username,
-                    'city': user.city,
-                    'region': user.region,
-                    'country': user.country,
-                    'created_at': f"{datetime.now().strftime('%Y-%m-%d %H:%M')}",
-                }
-            )
+        # Send message to room group
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'id': results.id,
+                'message': message,
+                'upvote': upvote,
+                'downvote': downvote,
+                'room_name': self.room_name,
+                'file': results.file.name,
+                'username': user.username,
+                'city': user.city,
+                'region': user.region,
+                'country': user.country,
+                'created_at': f"{datetime.now().strftime('%Y-%m-%d %H:%M')}",
+            }
+        )
 
     # Receive message from room group
     async def chat_message(self, event):

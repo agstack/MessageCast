@@ -21,8 +21,10 @@
             <div class="col-2">
               <div class="d-flex justify-content-end">
                 <input type="file" id="uploadFile" style="display: none;" />
-                <input type="button" value="Upload" onclick="document.getElementById('uploadFile').click();" />
+                <input id='fileUpload' type="button" value="Upload"
+                       onclick="document.getElementById('uploadFile').click();" />
                 <input class="btn btn-primary ml-2" id="chat-message-submit" type="button" value="Send">
+                  <div id="image-text"></div>
               </div>
             </div>
         </div>
@@ -536,9 +538,54 @@
         }
     };
 
+    function addItem(item) {
+        debugger
+        var listItem = document.createElement("span");
+        listItem.classList.add("sellect-trigger", "sellect-item");
+
+        listItem.innerHTML = item;
+        return listItem
+    }
+
+    // file upload, display name of file
+    {#$(document).ready(function(){#}
+    {#                debugger#}
+
+        $('#uploadFile').change(function(e){
+
+            // max image size is 10MB
+            if(this.files[0].size > 10485760){
+               alert("File is too big!");
+               this.value = "";
+               return
+            };
+
+            var filename = e.target.files[0].name;
+            $('#image-text').text(filename)
+        });
+
     document.querySelector('#chat-message-submit').onclick = async function(e) {
         const file = document.getElementById("uploadFile").files[0];
         const message = mySellect.getMessage();
+
+        {#adding new tags to array#}
+        if(message != '') {
+            var stringTags = message.match(/#[a-z]+/gi);
+            if (stringTags) {
+                var newTags = stringTags.map(c => c.slice(1))
+                var newTags1 = []
+
+                for (tag in newTags){
+                    if (mySellect.options.originList.includes(tag)){
+                        newTags1.concat(tag)
+                    }
+                }
+                const remoteParentElement = document.getElementsByClassName('sellect-origin-list')[0];
+
+                newTags1.forEach((item) => {remoteParentElement.insertBefore(addItem(item),
+                    remoteParentElement.nextSibling)})
+            }
+        }
 
         const payload = {
             'message': message,
@@ -546,12 +593,15 @@
         }
   
         if (file) {
+            // converting file to base64
             const fileInBase64 = await toBase64(file)
             payload.file = fileInBase64;
         }
 
         chatSocket.send(JSON.stringify(payload));
         mySellect.clear()
+        document.getElementById("uploadFile").value = null;
+        document.getElementById("image-text").innerText = null;
     };
 </script>
 </html>
