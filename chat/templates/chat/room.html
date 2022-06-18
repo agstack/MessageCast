@@ -570,18 +570,20 @@
 
         {#adding new tags to array#}
         if(message != '') {
+            debugger
             var stringTags = message.match(/#[a-z]+/gi);
             if (stringTags) {
                 var newTags = stringTags.map(c => c.slice(1))
-                var newTags1 = []
+                var newTags1 = Array()
 
                 for (tag in newTags){
-                    if (mySellect.options.originList.includes(tag)){
-                        newTags1.concat(tag)
+                    if (!mySellect.options.originList.includes(newTags[tag])){
+                        newTags1.push(newTags[tag])
+                        mySellect.options.originList.push(newTags[tag])
                     }
                 }
                 const remoteParentElement = document.getElementsByClassName('sellect-origin-list')[0];
-
+                debugger
                 newTags1.forEach((item) => {remoteParentElement.insertBefore(addItem(item),
                     remoteParentElement.nextSibling)})
             }
