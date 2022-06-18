@@ -25,3 +25,12 @@ msg (username-timestamp-geolocation)
 
 
 Django 4.0 was not compatible with django-pwa, so downgraded Django to 3.2
+
+
+**FOR IMPLEMENTING ELASTIC SEARCH**
+
+
+-   install java & run the following commands:
+-   install elasticsearch version 7.x
+https://www.alibabacloud.com/knowledge/developer/how-to-install-elasticsearch-on-linux-macos-and-windows
+

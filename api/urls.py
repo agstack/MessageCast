@@ -1,5 +1,5 @@
 from django.urls import path, include
-from api.views import Register, Login, Logout, HomeView, ConfirmationPageView, ManageVoting, home_test
+from api.views import Register, Login, Logout, HomeView, ConfirmationPageView, ManageVoting, home_test, APIProductView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
@@ -12,6 +12,7 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='custom_logout'),
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('search/', APIProductView.as_view({'get': 'list'})),
 
 ]
 

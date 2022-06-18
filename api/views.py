@@ -7,11 +7,22 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from AgStackRegistry.local_settings import EMAIL_HOST_USER, BASE_URL
+from api.documents import APIProductDocument
 from api.models import User, APIProduct, Subscription
-from api.serializers import APIProductSerializer, SubscriptionSerializer
+from api.serializers import APIProductSerializer, SubscriptionSerializer, APIProductDocumentSerializer
 from api.utils import send_email
 from chat.models import Message, Tag
 from chat.serializers import MessageSerializer, TagSerializer
+
+from django_elasticsearch_dsl_drf.filter_backends import (
+    FilteringFilterBackend,
+    CompoundSearchFilterBackend
+)
+from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
+from django_elasticsearch_dsl_drf.filter_backends import (
+    FilteringFilterBackend,
+    OrderingFilterBackend,
+)
 
 
 class Login(LoginView):
@@ -259,3 +270,32 @@ class ManageVoting(APIView):
 def home_test(request):
     languages = Tag.objects.all()
     return render(request,'test.html',{"languages":languages})
+
+
+class APIProductView(DocumentViewSet):
+    document = APIProductDocument
+    serializer_class = APIProductDocumentSerializer
+    lookup_field = 'first_name'
+    fielddata = True
+    filter_backends = [
+        FilteringFilterBackend,
+        OrderingFilterBackend,
+        CompoundSearchFilterBackend,
+    ]
+
+    search_fields = (
+        'name',
+        'about',
+    )
+    multi_match_search_fields = (
+        'name',
+        'about',
+    )
+    filter_fields = {
+        'name': 'name',
+        'about': 'about',
+    }
+    ordering_fields = {
+        'id': None,
+    }
+    ordering = ('id',)

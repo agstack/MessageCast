@@ -2,7 +2,9 @@ from django.db.models.functions import TruncMonth
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
+from api.documents import APIProductDocument
 from api.models import APIProduct, User, Subscription
+from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 
 
 class UsersSerializer(ModelSerializer):
@@ -67,3 +69,21 @@ class SubscriptionUsageSerializer(ModelSerializer):
         except:
             return None
 
+
+class APIProductDocumentSerializer(DocumentSerializer):
+
+    class Meta(object):
+        """Meta options."""
+        model = APIProduct
+        document = APIProductDocument
+        fields = (
+            'name',
+            'about',
+        )
+
+        def get_location(self, obj):
+            """Represent location value."""
+            try:
+                return obj.location.to_dict()
+            except:
+                return {}
