@@ -55,7 +55,7 @@
         var chatid = 'u'+chat_id;
         console.log(chatid)
 
-        $.post({% url 'voting' %}, {
+        $.post({% url 'api:voting' %}, {
             csrfmiddlewaretoken: '{{ csrf_token }}',
             chat_id: chat_id,
             voting_type: 'upvote',
@@ -71,7 +71,7 @@
         var chatid = 'd'+chat_id;
         console.log(chatid)
 
-        $.post({% url 'voting' %}, {
+        $.post({% url 'api:voting' %}, {
             csrfmiddlewaretoken: '{{ csrf_token }}',
             chat_id: chat_id,
             voting_type: 'downvote',

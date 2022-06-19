@@ -147,10 +147,10 @@ class ConfirmationPageView(TemplateView, APIView):
     def get(self, request):
         # getting request parameters
         user = request.user
-        prod_id = request.GET.get('product_id')
+        prod_name = request.GET.get('product_name')
         room = request.GET.get('chat')
         invite = request.GET.get('invite')
-        obj_api_product = APIProduct.objects.filter(id=prod_id).first()
+        obj_api_product = APIProduct.objects.filter(name=prod_name).first()
 
         # invite email user
         if invite:
@@ -176,7 +176,7 @@ class ConfirmationPageView(TemplateView, APIView):
 
         # redirect to room
         if room:
-            chat_objs = Message.objects.filter(topic_id=prod_id).order_by('created_at')
+            chat_objs = Message.objects.filter(topic__name=prod_name).order_by('created_at')
             chat_messages = MessageSerializer(chat_objs, many=True).data
             # chat_messages = [[message1, upvote1, downvote1], [message2, upvote2, downvote2], ....]
             msgs = []
@@ -275,7 +275,7 @@ def home_test(request):
 class APIProductView(DocumentViewSet):
     document = APIProductDocument
     serializer_class = APIProductDocumentSerializer
-    lookup_field = 'first_name'
+    # lookup_field = 'first_name'
     fielddata = True
     filter_backends = [
         FilteringFilterBackend,

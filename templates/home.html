@@ -17,25 +17,25 @@
             </div>
         {% endif %}
         <div class="col-2 m-4">
-            <input type="text" placeholder="Search.." onclick="">
+            <input id="searchbar" type="text" placeholder="Search..">
         </div>
-        <table class="table table-striped w-75 mx-auto">
+        <table id="customTable" class="table table-striped w-75 mx-auto">
           <thead>
-            <tr>
-              <th scope="col">ID</th>
+{#            <tr>#}
+{#              <th scope="col">ID</th>#}
               <th scope="col">Topic</th>
               <th scope="col">Logo</th>
               <th scope="col">Subscription</th>
               <th scope="col">Invite</th>
-            </tr>
+{#            </tr>#}
           </thead>
           <tbody>
             {% for obj in api_products %}
                 <tr>
-                    <form action="{% url 'confirmation_page' %}" method="get">
+                    <form action="{% url 'api:confirmation_page' %}" method="get">
                         {% csrf_token %}
-                        <input class="d-none" type="text" name="product_id" value="{{ obj.id }}"/>
-                        <td>{{ obj.id }}</td>
+{#                        <td>{{ obj.id }}</td>#}
+                        <input class='d-none' type='text' name='product_name' value='{{ obj.name }}'/>
                         <td>{{ obj.name }}</td>
                         <td>
                             {% if obj.logo %}
@@ -53,7 +53,7 @@
                               name="chat" value="chat"/>
                         </td>
                         <td>
-                            <input type="text" name="invite_email" value="">
+                            <input type='text' name='invite_email' value=''>
                             <input class="btn btn-sm btn-primary" type="submit"
                               name="invite" value="invite"/>
                         </td>
@@ -65,5 +65,107 @@
         </table>
     </div>
 
+{% block content %}
+{% endblock content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+{% block javascript %}
+{% endblock javascript %}
+
 </body>
+<script>
+
+    var input = document.getElementById("searchbar");
+    input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          search(e);
+        }
+    });
+
+    function search(e) {
+        var text = e.target.value;
+
+        if (text != ''){
+            text = "search?search="+text;
+            var serializedData = $(this).serialize();
+
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'api:search' %}",
+                data: {
+                    search: text,
+                },
+                success: function (response) {
+                    {#filtering based on the results#}
+                    const table = document.getElementById('customTable');
+                    table.classList.add("table-striped");
+
+                    var tbodyRef = document.getElementById('customTable').getElementsByTagName('tbody')[0];
+
+                    {#$("#customTable tbody").closest('tr').nextAll();#}
+                    $("#customTable > tbody"). empty();
+                    for(i in response) {
+
+                        var row = tbodyRef.insertRow();
+
+                        {#var row = table.insertRow(-1);#}
+
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        var cell4 = row.insertCell(3);
+
+                        cell1.innerHTML = "<input class='d-none' type='text' name='product_name' value='"+response[i].name+"'onclick='goToConfirmationPage()'/>"+response[i].name;
+                        if (response[i].logo) {
+                            cell2.innerHTML = " <img class='row-img' src='"+response[i].logo+"'>"
+                        } else {
+                            cell2.innerHTML = " <img class='card-img-top' alt='sample'>"
+                        }
+                        var prod_name = response[i].name;
+                        cell3.innerHTML = "<input class='btn btn-sm btn-success' type='submit' name='subscribe' value='subscribe' onclick='goToConfirmationPage(`subscribe`,`"+response[i].name+"`)'/>"+
+                                          "<input class='btn btn-sm btn-danger' type='submit' name='unsubscribe' value='unsubscribe' onclick='goToConfirmationPage(`unsubscribe`,`"+response[i].name+"`)'/>"+
+                                          "<input class='btn btn-sm btn-dark' type='submit' name='chat' value='chat' onclick='goToConfirmationPage(`chat`,`"+response[i].name+"`)'/>";
+                        cell4.innerHTML = "<input type='text' id=`"+response[i].name+"` name='invite_email' value=''><input class='btn btn-sm btn-primary' type='submit' name='invite' value='invite' onclick='goToConfirmationPage(`invite`,`"+response[i].name+"`)'/>";
+                    }
+
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert(response["responseJSON"]["error"]);
+                }
+            })
+        }
+
+    }
+
+</script>
+<script>
+    function goToConfirmationPage(e, name) {
+        // e is the functionality to perform in backend
+        // name is the api product name for which the functionality needs to be performed
+        debugger
+        {#default would be subscribe#}
+        var text = e == 'invite' ? {invite: 'invite', invite_email: document.getElementById(name)} : e == 'unsubscribe' ? {unsubscribe: 'unsubscribe'} : e == 'chat' ? {chat: 'chat'} : {subscribe: 'subscribe'}
+        text['product_name'] = name
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'api:confirmation_page' %}",
+            data: text,
+            success: function (data, textStatus) {
+                debugger
+                if(e == 'chat') {
+                    window.location.href = '/confirmation_page/?product_name='+name+'&chat=chat&invite_email='
+                } else {
+                    window.location.href = '/confirmation_page/?product_name='+name
+                }
+
+            }
+        })
+    }
+</script>
 </html>
+
+
+
+{#a big problem in this code is there are 2 flows to complete the backend, one via js and the other via html, js is prefered through out the file#}

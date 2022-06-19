@@ -55,7 +55,5 @@ class APIProductDocument(Document):
         model = APIProduct # The model associated with this Document
 
         # The fields of the model you want to be indexed in Elasticsearch
-        fields = [
-            'name',
-            'about',
+        fields = ['name', 'about', 'logo', 'active'
         ]

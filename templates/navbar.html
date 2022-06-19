@@ -2,8 +2,8 @@
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3"
          style="background-color:#34495e; color:antiquewhite;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'home' %}"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
-            <a href="{% url 'home' %}" class="btn btn-dark btn-sm">
+            <a class="navbar-brand" href="{% url 'api:home' %}"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
+            <a href="{% url 'api:home' %}" class="btn btn-dark btn-sm">
                 Pub Sub
             </a>
             <a href="#" class="ml-2 btn btn-dark btn-sm">
@@ -17,7 +17,7 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav nav nav-pills" style="margin-left:auto;">
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="{% url 'custom_logout' %}?next={{ request.path }}">
+                        <a class="nav-link text-light" href="{% url 'api:custom_logout' %}?next={{ request.path }}">
                             Hi, {{ user.email }}
                             <i class="fa fa-sign-out" aria-hidden="true"></i> &nbsp
                             Log Out

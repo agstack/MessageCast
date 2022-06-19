@@ -24,7 +24,7 @@
                 {% endif %}
             </div>
             <div class="col offset-1">
-                <form action="{% url 'confirmation_page' %}" method="post">
+                <form action="{% url 'api:confirmation_page' %}" method="post">
                     {% csrf_token %}
                     <input class="d-none" type="text" name="product_id" value="{{ product.id }}"/>
 

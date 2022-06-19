@@ -5,6 +5,6 @@
     {% if user.is_authenticated %}
         <li class="d-none"><a href="{% url 'logout' %}?next={{ request.path }}"></a></li>
     {% else %}
-        <li><a href="{% url 'home' %}"></a></li>
+        <li><a href="{% url 'api:home' %}"></a></li>
     {% endif %}
 </ul>

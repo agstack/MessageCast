@@ -76,10 +76,7 @@ class APIProductDocumentSerializer(DocumentSerializer):
         """Meta options."""
         model = APIProduct
         document = APIProductDocument
-        fields = (
-            'name',
-            'about',
-        )
+        fields = ('id', 'name', 'about', 'logo', 'active',)
 
         def get_location(self, obj):
             """Represent location value."""

@@ -21,7 +21,7 @@ from AgStackRegistry import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('pwa.urls')),
-    path('', include('api.urls')),
+    path(r'', include('api.urls')),
     path('chat/', include('chat.urls')),
 
 

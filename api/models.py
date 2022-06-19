@@ -65,7 +65,7 @@ class User(AbstractUser):
 
 
 class APIProduct(models.Model):
-    name = models.CharField(max_length=255, verbose_name='name')
+    name = models.CharField(max_length=255, verbose_name='name', unique=True)
     about = models.CharField(max_length=255, verbose_name='about')
     logo = models.FileField(null=True, blank=True)
     active = models.BooleanField(default=False)
