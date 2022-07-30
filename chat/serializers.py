@@ -2,6 +2,8 @@ import time
 from rest_framework import serializers
 
 from chat.models import Message, Tag
+from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
+from api.documents import MessageDocument
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -27,3 +29,17 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('tag', )
 
 
+class MessageDocumentSerializer(DocumentSerializer):
+
+    class Meta(object):
+        """Meta options."""
+        model = Message
+        document = MessageDocument
+        fields = ('id', 'description', 'topic')
+
+        def get_location(self, obj):
+            """Represent location value."""
+            try:
+                return obj.location.to_dict()
+            except:
+                return {}

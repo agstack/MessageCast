@@ -24,7 +24,7 @@
                 {% if form.errors %}
                     <h6 class="alert-danger col-4 p-2 offset-4">Your username and password didn't match. Please try again.</h6>
                 {% endif %}
-                <form class="" method="post" action="{% url 'custom_login' %}">
+                <form class="" method="post" action="{% url 'api:custom_login' %}">
                     {% csrf_token %}
 
                     <table class="d-flex justify-content-center">
@@ -48,14 +48,14 @@
                         <input type="hidden" name="/home/" value="/home/"/>
                     </div>
                     <div class="col mx-auto mt-1 text-center">
-                        <a class="btn btn-danger col-2" href="{% url 'register' %}"
+                        <a class="btn btn-danger col-2" href="{% url 'api:register' %}"
                            style="word-wrap: break-word; white-space: normal !important;">Create Account</a>
                     </div>
 {#                    <div class="col mx-auto mt-3 text-center">#}
 {#                        <a class="btn btn-outline-danger rounded-5 col-2" href="{% provider_login_url 'google' %}">Login with Google</a>#}
 {#                    </div>#}
                     <div class="col mx-auto mt-1 text-center">
-                        <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                        <p><a href="{% url 'api:password_reset' %}">Lost password?</a></p>
                     </div>
 
                 </form>

@@ -28,7 +28,7 @@
                 {% if success %}
                     <h6 class="alert-success col-4 p-2 offset-4">{{ success }}</h6>
                 {% endif %}
-                <form class="" method="post" action="{% url 'register' %}">
+                <form class="" method="post" action="{% url 'api:register' %}">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-4 offset-2">
@@ -70,7 +70,7 @@
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                             </div>
                             <div class="mt-5">
-                              <a href="{% url 'custom_login' %}" class="mr-4">Already have an account?</a>
+                              <a href="{% url 'api:custom_login' %}" class="mr-4">Already have an account?</a>
                               <button type="submit" class="btn btn-danger">Create</button>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
 from django.urls import path, include
-from api.views import Register, Login, Logout, HomeView, ConfirmationPageView, ManageVoting, home_test, APIProductView
+from api.views import Register, Login, Logout, HomeView, ConfirmationPageView, ManageVoting, home_test, APIProductView, \
+    ChatMessageView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.decorators.csrf import csrf_exempt
 
@@ -16,7 +17,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('search/', APIProductView.as_view({'get': 'list'}), name='search'),
-
+    path('search-chat/', ChatMessageView.as_view({'get': 'list'}), name='search-chat'),
 ]
 
 

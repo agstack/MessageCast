@@ -7,12 +7,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from AgStackRegistry.local_settings import EMAIL_HOST_USER, BASE_URL
-from api.documents import APIProductDocument
+from api.documents import APIProductDocument, MessageDocument
 from api.models import User, APIProduct, Subscription
 from api.serializers import APIProductSerializer, SubscriptionSerializer, APIProductDocumentSerializer
 from api.utils import send_email
 from chat.models import Message, Tag
-from chat.serializers import MessageSerializer, TagSerializer
+from chat.serializers import MessageSerializer, TagSerializer, MessageDocumentSerializer
 
 from django_elasticsearch_dsl_drf.filter_backends import (
     FilteringFilterBackend,
@@ -294,6 +294,35 @@ class APIProductView(DocumentViewSet):
     filter_fields = {
         'name': 'name',
         'about': 'about',
+    }
+    ordering_fields = {
+        'id': None,
+    }
+    ordering = ('id',)
+
+
+class ChatMessageView(DocumentViewSet):
+    document = MessageDocument
+    serializer_class = MessageDocumentSerializer
+    # lookup_field = 'first_name'
+    fielddata = True
+    filter_backends = [
+        FilteringFilterBackend,
+        OrderingFilterBackend,
+        CompoundSearchFilterBackend,
+    ]
+
+    search_fields = (
+        'description',
+        'topic',
+    )
+    multi_match_search_fields = (
+        'description',
+        'topic',
+    )
+    filter_fields = {
+        'description': 'description',
+        'topic': 'topic',
     }
     ordering_fields = {
         'id': None,
