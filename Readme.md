@@ -40,3 +40,21 @@ Django 4.0 was not compatible with django-pwa, so downgraded Django to 3.2
     
 **also need to rebuild index after changes in the code**
 -   python manage.py search_index --rebuild  
+
+
+
+**Start anew**
+-   download project from repository
+-   install python from `https://www.python.org/downloads/`
+-   download elastic search as mentioned above
+-   cd to the directory
+-   run the following commands:
+`pip install -r requirements.txt`
+`python manage.py makemigrations`
+`python manage.py migrate`
+`python manage.py createsuperuser`
+-   fill out the prompts to create an admin user    
+-   to start the project everytime:
+`python manage.py runserver`
+-   now go and check 127.0.0.1 in the local browser
+    
