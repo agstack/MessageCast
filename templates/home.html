@@ -16,8 +16,13 @@
                 {{ success }}
             </div>
         {% endif %}
-        <div class="col-2 m-4">
-            <input id="searchbar" type="text" placeholder="Search..">
+        <div class="row">
+            <div class="col-2 m-4">
+                <input id="searchbar" type="text" placeholder="Search..">
+            </div>
+            <div class="col-2 m-4">
+                <input id="searchbarChat" type="text" placeholder="Search Chats..">
+            </div>
         </div>
         <table id="customTable" class="table table-striped w-75 mx-auto">
           <thead>
@@ -105,6 +110,7 @@
 
                     {#$("#customTable tbody").closest('tr').nextAll();#}
                     $("#customTable > tbody"). empty();
+                    debugger
                     for(i in response) {
 
                         var row = tbodyRef.insertRow();
@@ -127,6 +133,86 @@
                                           "<input class='btn btn-sm btn-danger' type='submit' name='unsubscribe' value='unsubscribe' onclick='goToConfirmationPage(`unsubscribe`,`"+response[i].name+"`)'/>"+
                                           "<input class='btn btn-sm btn-dark' type='submit' name='chat' value='chat' onclick='goToConfirmationPage(`chat`,`"+response[i].name+"`)'/>";
                         cell4.innerHTML = "<input type='text' id=`"+response[i].name+"` name='invite_email' value=''><input class='btn btn-sm btn-primary' type='submit' name='invite' value='invite' onclick='goToConfirmationPage(`invite`,`"+response[i].name+"`)'/>";
+                    }
+
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert(response["responseJSON"]["error"]);
+                }
+            })
+        }
+
+    }
+
+</script>
+<script>
+
+    var input = document.getElementById("searchbarChat");
+    input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          searchChat(e);
+        }
+    });
+
+    const arrayContainsObject = (array, object) => {
+      return array.some(item => Object.keys(item).every(key => item[key] === object[key]))
+    }
+
+    function searchChat(e) {
+        var text = e.target.value;
+
+        if (text != ''){
+            text = "search-chat?description="+text;
+            var serializedData = $(this).serialize();
+
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'api:search-chat' %}",
+                data: {
+                    search: text,
+                },
+                success: function (response) {
+                    {#filtering based on the results#}
+                    const table = document.getElementById('customTable');
+                    table.classList.add("table-striped");
+
+                    var tbodyRef = document.getElementById('customTable').getElementsByTagName('tbody')[0];
+
+                    {#$("#customTable tbody").closest('tr').nextAll();#}
+                    $("#customTable > tbody"). empty();
+
+                    debugger
+                    var arr = [];
+                    for(i in response) {
+                        if (!arrayContainsObject(arr, response[i]['topic'])){
+                            arr.push(response[i]['topic']);
+                        }
+                    }
+
+                    debugger
+                    for(i in arr) {
+
+                        var row = tbodyRef.insertRow();
+
+                        {#var row = table.insertRow(-1);#}
+
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        var cell4 = row.insertCell(3);
+
+                        cell1.innerHTML = "<input class='d-none' type='text' name='product_name' value='"+arr[i].name+"'onclick='goToConfirmationPage()'/>"+arr[i].name;
+                        if (arr[i].logo) {
+                            cell2.innerHTML = " <img class='row-img' src='"+arr[i].logo+"'>"
+                        } else {
+                            cell2.innerHTML = " <img class='card-img-top' alt='sample'>"
+                        }
+                        var prod_name = arr[i].name;
+                        cell3.innerHTML = "<input class='btn btn-sm btn-success' type='submit' name='subscribe' value='subscribe' onclick='goToConfirmationPage(`subscribe`,`"+arr[i].name+"`)'/>"+
+                                          "<input class='btn btn-sm btn-danger' type='submit' name='unsubscribe' value='unsubscribe' onclick='goToConfirmationPage(`unsubscribe`,`"+arr[i].name+"`)'/>"+
+                                          "<input class='btn btn-sm btn-dark' type='submit' name='chat' value='chat' onclick='goToConfirmationPage(`chat`,`"+arr[i].name+"`)'/>";
+                        cell4.innerHTML = "<input type='text' id=`"+arr[i].name+"` name='invite_email' value=''><input class='btn btn-sm btn-primary' type='submit' name='invite' value='invite' onclick='goToConfirmationPage(`invite`,`"+arr[i].name+"`)'/>";
                     }
 
                 },
