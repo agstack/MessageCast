@@ -8,3 +8,6 @@ local_settings.py
 .DS_Store
 boot/
 uploads/
+
+elasticsearch-7.3.0-darwin-x86_64.tar.gz
+elasticsearch-7.3.0
