@@ -28,14 +28,13 @@ services:
     entrypoint: /src/entrypoint.sh
     volumes:
     - ./:/src
-    - web-static:/src/static
   nginx:
     restart: always
     build: ./nginx/
     ports:
       - "8080:80"
     volumes:
-      - web-static:/www/static
+      - ./static:/www/static
     links:
       - web:web
     depends_on:
