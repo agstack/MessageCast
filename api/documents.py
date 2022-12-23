@@ -2,7 +2,7 @@ from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 
 from chat.models import Message
-from .models import APIProduct
+from .models import APIProduct, User
 
 
 @registry.register_document
@@ -44,7 +44,7 @@ class MessageDocument(Document):
 
         # The fields of the model you want to be indexed in Elasticsearch
         fields = ['description', ]
-        related_models = [APIProduct]
+        related_models = [APIProduct, User]
 
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""
@@ -52,10 +52,10 @@ class MessageDocument(Document):
             'topic'
         )
 
-    # def get_instances_from_related(self, related_instance):
-    #     """If related_models is set, define how to retrieve the Car instance(s) from the related model.
-    #     The related_models option should be used with caution because it can lead in the index
-    #     to the updating of a lot of items.
-    #     """
-    #     if isinstance(related_instance, APIProduct):
-    #         return related_instance.car_set.all()
+    def get_instances_from_related(self, related_instance):
+        """If related_models is set, define how to retrieve the Car instance(s) from the related model.
+        The related_models option should be used with caution because it can lead in the index
+        to the updating of a lot of items.
+        """
+        if isinstance(related_instance, APIProduct) or isinstance(related_instance, User):
+            return related_instance.message_set.all()
