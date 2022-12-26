@@ -70,7 +70,7 @@ class Register(TemplateView):
         # send confirmation email
         # twilio integration
 
-        return render(request, self.template_name, {'success': 'New User created', 'title': 'Register'})
+        return render(req/home/shaheer/user-registryuest, self.template_name, {'success': 'New User created', 'title': 'Register'})
 
 
 class HomeView(TemplateView, LoginRequiredMixin, APIView):
