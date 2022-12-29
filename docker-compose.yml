@@ -1,6 +1,7 @@
 version: "3.0"
 services:
   elasticsearch:
+    container_name: elasticsearch
     image: elasticsearch:7.17.7
     environment:
       - xpack.security.enabled=false
@@ -8,6 +9,7 @@ services:
     ports:
       - 9200:9200
   postgres:
+    container_name: postgres
     image: postgres:alpine
     restart: always
     volumes:
@@ -15,6 +17,7 @@ services:
     environment:
       POSTGRES_PASSWORD: example
   web:
+    container_name: web
     build: .
     environment:
       DEBUG: 'true'
@@ -29,6 +32,7 @@ services:
     volumes:
     - ./:/src
   nginx:
+    container_name: nginx
     restart: always
     build: ./nginx/
     ports:
@@ -40,6 +44,7 @@ services:
     depends_on:
       - web
   adminer:
+    container_name: adminer
     image: adminer
     restart: always
     ports:
