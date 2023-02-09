@@ -1,0 +1,54 @@
+version: "3.0"
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.17.7
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    ports:
+      - 9200:9200
+  postgres:
+    container_name: postgres
+    image: postgres:alpine
+    restart: always
+    volumes:
+    - pgdata:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_PASSWORD: example
+  web:
+    container_name: web
+    build: .
+    environment:
+      DEBUG: 'true'
+    restart: always
+    working_dir: /src
+    ports:
+      - 8000:8000
+    depends_on:
+    - elasticsearch
+    - postgres
+    entrypoint: /src/entrypoint.sh
+    volumes:
+    - ./:/src
+  nginx:
+    container_name: nginx
+    restart: always
+    build: ./nginx/
+    ports:
+      - "8080:80"
+    volumes:
+      - ./static:/www/static
+    links:
+      - web:web
+    depends_on:
+      - web
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+volumes:
+  web-static:
+  pgdata:
